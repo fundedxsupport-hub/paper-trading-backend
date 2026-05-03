@@ -22,7 +22,13 @@ python -m pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8002 --reload
 ```
 
-The Flutter app currently points to `http://192.168.1.13:8002`. If your Wi-Fi IP changes, run `ipconfig`, copy the new IPv4 address, and either update `PaperTradingService.baseUrl` or run Flutter with:
+The Flutter app currently points to the Render backend:
+
+```text
+https://paper-trading-backend-9rmy.onrender.com
+```
+
+For local testing you can override it with:
 
 ```powershell
 flutter run --dart-define=PAPER_TRADING_API_BASE_URL=http://YOUR_IPV4:8002
