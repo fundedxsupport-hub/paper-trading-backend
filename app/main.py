@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import check_connection, setup_indexes
-from app.models import CloseTradeRequest, MarketPriceRequest, MarketPricesRequest, PlaceTradeRequest
+from app.models import CloseTradeRequest, MarketPriceRequest, MarketPricesRequest, PlaceTradeRequest, WalletSyncRequest
 from app.services import (
     close_trade,
     get_open_trades,
@@ -17,6 +17,7 @@ from app.services import (
     refresh_open_trades,
     set_market_price,
     set_market_prices,
+    sync_wallet,
 )
 
 settings = get_settings()
@@ -83,6 +84,11 @@ def refresh_pl() -> dict:
 @app.post("/place-trade")
 def api_place_trade(payload: PlaceTradeRequest) -> dict:
     return place_trade(payload)
+
+
+@app.post("/wallet-sync")
+def api_wallet_sync(payload: WalletSyncRequest) -> dict:
+    return sync_wallet(payload)
 
 
 @app.post("/close-trade")

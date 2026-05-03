@@ -21,6 +21,16 @@ def day_bounds_utc(day: datetime | None = None, offset_minutes: int = 330) -> tu
     return local_start.astimezone(timezone.utc), local_end.astimezone(timezone.utc)
 
 
+def is_market_open(offset_minutes: int = 330) -> bool:
+    offset = timezone(timedelta(minutes=offset_minutes))
+    local_now = now_utc().astimezone(offset)
+    if local_now.weekday() >= 5:
+        return False
+    market_open = time(9, 15)
+    market_close = time(15, 30)
+    return market_open <= local_now.time() <= market_close
+
+
 def clean_value(value: Any) -> Any:
     if isinstance(value, ObjectId):
         return str(value)

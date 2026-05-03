@@ -14,16 +14,40 @@ class TradeStatus(str, Enum):
     closed = "CLOSED"
 
 
+class OrderType(str, Enum):
+    market = "MARKET"
+    limit = "LIMIT"
+
+
+class ProductType(str, Enum):
+    delivery = "DELIVERY"
+    intraday = "INTRADAY"
+
+
 class PlaceTradeRequest(BaseModel):
     client_id: str = Field(..., min_length=1, max_length=128)
     symbol: str = Field(..., min_length=1, max_length=64)
     quantity: float = Field(..., gt=0)
     side: TradeSide
+    order_type: OrderType = OrderType.market
+    product: ProductType = ProductType.delivery
     market_price: float | None = Field(default=None, gt=0)
+    limit_price: float | None = Field(default=None, gt=0)
+    wallet_balance: float | None = Field(default=None, ge=0)
 
     @field_validator("client_id", "symbol")
     @classmethod
     def strip_upper(cls, value: str) -> str:
+        return value.strip().upper()
+
+
+class WalletSyncRequest(BaseModel):
+    client_id: str = Field(..., min_length=1, max_length=128)
+    virtual_capital: float = Field(..., ge=0)
+
+    @field_validator("client_id")
+    @classmethod
+    def strip_client_id(cls, value: str) -> str:
         return value.strip().upper()
 
 
@@ -67,9 +91,12 @@ class TradeResponse(BaseModel):
     symbol: str
     side: TradeSide
     quantity: float
+    order_type: OrderType
+    product: ProductType
     entry_price: float
     current_price: float
     exit_price: float | None = None
+    required_amount: float
     profit_loss: float
     status: TradeStatus
     opened_at: datetime | str
